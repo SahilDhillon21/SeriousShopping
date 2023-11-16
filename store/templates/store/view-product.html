@@ -1,0 +1,80 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block title %} Product | {{product.name}} {% endblock %}
+
+{% block content %}
+
+<div class="container py-4 my-4 mx-auto d-flex flex-column">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+    <link rel="stylesheet" href="{% static 'css/view-product.css' %}">
+    <div class="header">
+        <div class="row r1">
+            <div class="col-md-5 abc">
+                <h1>{{product.name}}</h1>
+            </div>
+            <div class="col-md-auto text-right pqr"><i class="fa fa-star"></i><i class="fa fa-star">
+                    <h3 class="text-center" style="color: black;">Score</h3>
+                    <div class="text-center" role="progressbar" aria-valuenow="{{rating}}" aria-valuemin="0"
+                        aria-valuemax="100" style="--value: {{rating}}"></div>
+            </div>
+
+        </div>
+        <div class="container-body mt-4">
+            <div class="row r3 justify-content-center">
+                <div class="col-md-5 p-0 klo">
+                    <ul>
+                        <li>Price: <strong>${{product.price}}</strong></li>
+                        <li class="myt des">Description</li>
+                        <li>{{product.description}}</li>
+                    </ul>
+                </div>
+                <div class="col-md-7">
+                    {% if product.imageURL == '' %}
+                    <img src="{% static 'images/no-image.jpg' %}" class="product-image" width="90%" height="95%"
+                        alt="No-Image_Found">
+                    {% else %}
+                    <img src="{{product.imageURL}}" class="product-image" alt="product-image">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="footer d-flex flex-column mt-5">
+            <div class="row r4">
+                <div class="col-md-2 mio ">
+                    <button data-product="{{product.id}}" data-action="add"
+                        class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+                </div>
+                <div class="col-md-3 mio mt-2   ">
+                    <a class="btn btn-outline-dark" href="{% url 'store' %}">&#x2190; Continue Shopping</a>
+                </div>
+                <div class="col-md-2 mio ">
+                    <a class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer d-flex flex-column mt-5">
+            <div class="row r4">
+                <div class="col-md-2 myt des"><a href="#">Reviews</a></div>
+            </div>
+        </div>
+
+        {% if request.user.is_authenticated and product.seller != request.user.seller  %}
+
+            {% include 'store/add-review.html' %}
+
+        {% endif %}
+
+        {% for review in reviews %}
+
+        {% include 'store/review.html' %}
+
+        {% endfor %}
+
+    </div>
+
+
+    {% endblock content %}

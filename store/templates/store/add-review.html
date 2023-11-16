@@ -1,0 +1,30 @@
+<form method="POST" id="review-form" action="{% url 'addReview' %}" enctype='multipart/form-data'>
+    {% csrf_token %}
+    <style>
+        p{
+            color: black;
+        }
+        body{
+            color: black;
+        }
+    </style>
+    <input type="text" name="product" hidden value="{{product}}" id="">
+    <div class="form-group">
+        <label for="exampleFormControlTextarea1" style="color: black;">Your rating</label>
+        <input type="number" value="{{review.rating}}" name="rating" id="rating" min="0" required max="100" placeholder="/100">
+    </div>
+
+        <div class="form-group">
+            <label for="exampleFormControlFile1"><p>Upload images</p></label>
+            <input type="file" multiple name="rev-image" class="form-control-file" id="files">
+        </div>
+
+    <div class="form-group">
+        <label for="exampleFormControlTextarea1"><p>Your review</p></label>
+        <textarea required class="form-control" value="{{review.description}}" name="review" id="description" rows="3"></textarea>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>

@@ -1,0 +1,162 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+<style>
+    .dec {
+        font-family: 'Bebas Neue', cursive;
+        font-size: 3em;
+        color: black;
+    }
+
+    :root {
+        --color-text: white;
+        --color-front: hsl(250deg, 100%, 40%);
+        --color-back: hsl(252deg, 100%, 60%);
+    }
+
+    .tag {
+        position: relative;
+        display: inline-block;
+        border-radius: 6px;
+        clip-path: polygon(20px 0px, 100% 0px, 100% 100%, 0% 100%, 0% 20px);
+        background: var(--color-front);
+        padding: 16px 40px;
+        margin: 0 8px;
+        font-weight: 600;
+        font-size: 18px;
+        color: var(--color-text);
+        transition: clip-path 500ms;
+    }
+
+    .tag:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: var(--color-back);
+        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
+        border-radius: 0 0 6px 0;
+        transition: transform 500ms;
+        font-family: sans-serif;
+    }
+
+    .tag:hover {
+        clip-path: polygon(0px 0px, 100% 0px, 100% 100%, 0% 100%, 0% 0px);
+    }
+
+    .tag:hover:after {
+        transform: translate(-100%, -100%);
+    }
+</style>
+
+<h1 class="text-center my-3 dec" style="color: blueviolet;">{{seller.brand}}</h1>
+
+<button>
+    <h3 class="my-3 text-center">{{seller.user}}'s dashboard</h3>
+</button> <br>
+
+<button class="btn btn-success my-3" id="add-product-btn">Add a product</button>
+
+<form action="{% url 'add-product' %}" id="add-product-form" class="hidden" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">Name</span>
+        <input type="text" name="name" required class="form-control" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+    <br>
+
+    <div class="input-group">
+        <span class="input-group-text">Description</span>
+        <textarea required class="form-control" name="description" aria-label="With textarea"></textarea>
+    </div>
+
+    <div class="input-group mt-3">
+        <input type="file" accept="image/*" name="image" class="form-control" required id="inputGroupFile02">
+        <label class="input-group-text" for="inputGroupFile02">Upload</label>
+    </div>
+
+    <div class="input-group mb-3 mt-3">
+
+        <span class="input-group-text">Price</span>
+        <span class="input-group-text">$</span>
+        <input type="number" name="price" required class="form-control" aria-label="Amount (to the nearest dollar)">
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="digital" id="flexCheckChecked">
+        <label class="form-check-label" for="flexCheckChecked">
+            Product is digital
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-dark">Confirm</button>
+
+</form>
+
+<h4 class="my-3 dec">My products</h4>
+
+<div class="row">
+    {% if no_of_products > 0 %}
+
+        {% for product in my_products %}
+
+        <div class="col-lg-4">
+
+
+            {% if product.imageURL == '' %}
+            <img class="thumbnail" src="{% static 'images/no-image.jpg' %}">
+            {% else %}
+            <img class="thumbnail" src="{{product.imageURL}}">
+            {% endif %}
+
+            <div class="box-element product">
+                <h6><strong>{{product.name}}
+                        {% if product.seller == null %}
+                        <button class="btn">by SeriousShopping</button>
+                        {% else %}
+                        <button class="btn btn-dark" style="border-radius: 30%;">{{product.seller.brand}}</button>
+                        {% endif %}
+                    </strong></h6>
+                <hr>
+
+                <a class="btn btn-outline-success view-product" href="/view_product/{{product.id}}">View</a>
+                <a class="btn btn-outline-danger view-product" href="/remove-product/{{product.id}}" >Remove</a>
+                <h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
+
+            </div>
+        </div>
+
+    {% endfor %}
+
+    {% else %}
+    <h5>You currently have no products listed on the market</h5>
+    {% endif %}
+</div>
+
+
+
+<div class="col-md-12">
+    <h4 class="my-3 dec">Reviews on my products</h4>
+    {% for review in my_reviews %}
+    <div class="tag">
+        {{review.product.name}}
+    </div>
+    {% include 'store/review.html' %}
+    {% endfor %}
+</div>
+
+<script>
+    var add_product_btn = document.getElementById('add-product-btn')
+    add_product_btn.addEventListener('click', () => {
+        document.getElementById('add-product-form').classList.remove('hidden')
+    })
+</script>
+
+{% endblock %}
