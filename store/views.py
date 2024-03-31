@@ -3,10 +3,11 @@ from django.http import JsonResponse, HttpResponse
 import json
 import datetime
 from .models import * 
-from .utils import cookieCart, cartData, guestOrder, find_avg_rating, get_images
+from .utils import *
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import pickle
 
 def store(request):
 	data = cartData(request)
@@ -145,7 +146,23 @@ def addReview(request):
 		product = Product.objects.get(name = productname)
 		customer = request.user.customer
 
-		new_review, created = Review.objects.get_or_create(customer=customer, product=product, rating=rating, description = review)
+	with open('sentiment_model.pkl', 'rb') as f:
+		classifier = pickle.load(f)
+	with open('vectorizer.pkl', 'rb') as f:
+		vectorizer = pickle.load(f)
+
+		new_text_vectorized = vectorizer.transform([review])
+
+		sentiment = classifier.predict(new_text_vectorized)[0]
+
+		if(sentiment == 2):
+			sentiment = "Positive"
+		elif(sentiment == 1): 
+			sentiment = "Neutral"
+		else:
+			sentiment = "Negative"
+
+		new_review, created = Review.objects.get_or_create(customer=customer, product=product, rating=rating, description = review, sentiment=sentiment)
 
 		for image in verified_images:
 			newImage = reviewImages.objects.create(review=new_review, image=image)

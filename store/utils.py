@@ -1,6 +1,9 @@
 import json
 from .models import *
 
+import pandas as pd
+import pickle
+
 def cookieCart(request):
 
 	#Create empty cart for now for non-logged in user
@@ -103,4 +106,7 @@ def get_images(images):
 		if file_type == 'image':
 			verified_images.append(image)
 	return verified_images
+
+def findSentiment_NaiveBayes(review):
+	return True
 

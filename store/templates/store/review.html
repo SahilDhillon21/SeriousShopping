@@ -12,10 +12,18 @@
                     <div class="float-left meta">
                         <div class="title h5 mt-3">
                             <a href="#" class="m-3"><b>{{review.customer.name}} rated it at {{review.rating}}%</b></a>
-                            <b style="color: black;">Verified purchase☑️</b>
+                            <b style="color: black;">Verified purchase☑️ </b>
+                            {% if review.sentiment == "Positive" %}
+                            <b style="color: green;">{{ review.sentiment }}</b>
+                            {% elif review.sentiment == "Neutral" %}
+                            <b style="color: rgb(2, 0, 128);">{{ review.sentiment }}</b>
+                            {% elif review.sentiment == "Negative" %}
+                            <b style="color: rgb(221, 20, 9);">{{ review.sentiment }}</b>
+                            {% endif %}
 
                             {% if request.user.customer == review.customer %}
-                            <a href="/deleteReview/{{review.id}}" type="button" class="btn btn-danger">Delete your review</a>
+                            <a href="/deleteReview/{{review.id}}" type="button" class="btn btn-danger">Delete your
+                                review</a>
                             <button type="button" id="edit-btn" class="btn btn-info">Edit</button>
                             {% endif %}
 
@@ -33,7 +41,8 @@
                     {% for imgObject in review_images %}
                     {% if imgObject.review == review %}
                     <div class="col-md-2">
-                        <img src="{{imgObject.image.url}}" style="margin-left: 3px;" width="150px" height="150px" alt="">
+                        <img src="{{imgObject.image.url}}" style="margin-left: 3px;" width="150px" height="150px"
+                            alt="">
                     </div>
                     {% endif %}
 
@@ -46,7 +55,7 @@
 
         <script>
             var canReview = "{{can_review}}"
-            if (canReview === "False"){
+            if (canReview === "False") {
                 document.getElementById('review-form').classList.add('hidden')
             }
 
@@ -55,11 +64,11 @@
             editBTN.addEventListener('click', () => {
                 var rev_form = document.getElementById('review-form').classList.remove('hidden')
                 document.getElementById('current-review').classList.add('hidden')
-                 var ratingField = document.getElementById('rating')
-                 ratingField.value = "{{review.rating}}"
+                var ratingField = document.getElementById('rating')
+                ratingField.value = "{{review.rating}}"
 
-                 var descriptionField = document.getElementById('description')
-                 descriptionField.value = "{{review.description}}"
+                var descriptionField = document.getElementById('description')
+                descriptionField.value = "{{review.description}}"
             })
 
         </script>

@@ -98,6 +98,7 @@ class Review(models.Model):
 	rating = models.FloatField()
 	description = models.TextField(default="Empty")
 	timestamp = models.DateTimeField(auto_now_add=True, null=True)
+	sentiment = models.CharField(max_length = 20, default="Neutral")
 
 	def __str__(self):
 		return self.customer.name + " rated " + self.product.name + " -> " + str(self.rating)
